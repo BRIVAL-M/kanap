@@ -86,12 +86,17 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
     const quantity = document.querySelector("#quantity").value;
     
     console.log(colors, quantity);// <------ A delete
+ 
+   
 
-    if (colors == null || colors == "" || quantity == null || quantity == 0 || quantity == "") {
-        alert("Pourriez-vous nous indiquer la couleur et le nombre de Kanaps que vous souhaitez commander s'il vous plaît 🙏")
+    if (colors == null || colors == "" || quantity == null || quantity == "" ||quantity > 100 || quantity < 1) {
+        alert("Pourriez-vous nous indiquer une couleur et une quantité entre 1 et 100 pour poursuivre votre commande s'il vous plaît 🙏")
         // si rien n'est sélectionné message 
         return // il stop
+        
 }
+
+
 
     //////////////////////////// localStorage /////////////////////////////////////
 
@@ -110,8 +115,8 @@ let itemStored = JSON.parse(localStorage.getItem("userOrder"));
     
     if (itemStored) {// Si il y a déjà des items dans le localStorage
         // changer ici pour incrémenter quantité
+        
        
-     
         addKanaps()
 
 //addQuantity()
@@ -157,4 +162,5 @@ let itemStored = JSON.parse(localStorage.getItem("userOrder"));
     
     }) 
 }*/
+
 

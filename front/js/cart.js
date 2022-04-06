@@ -52,14 +52,15 @@ function totalQuantity(itemStored) { // <<<<<<<<<<<<<<<<<<<<<<< ca marche (sans 
 
 //fonction pour calculer le prix total du panier
 function totalPrice(itemStored, kanapData) {
-
   let totalPrice = 0;
   for (let i = 0; i < itemStored.length; i++) {
     const myKanap = kanapData.find(_item => _item._id === itemStored[i].id)
     totalPrice += myKanap.price * itemStored[i].quantity;
   }
   const total = document.querySelector("#totalPrice");
+ 
   total.textContent = totalPrice;
+  
 }
 
 
@@ -127,17 +128,42 @@ function cart(itemStored, k, kanapData) {
     quantityChoice.min = "1";
     quantityChoice.max = "100";
     quantityChoice.value = itemStored[k].quantity;
+    ///////////////////////////////////////////////////////////////////////////////
+   /**La quatité change sans reload mais le prix total a besoin de reload pour se mettre a jour */
     
+    /////////////////////////////////////////////////
     quantityChoice.addEventListener("change", () => {
 
-      itemStored[k].quantity = quantityChoice.value;
+     /* itemStored[k].quantity = quantityChoice.value;
       localStorage.setItem("userOrder", JSON.stringify(itemStored));
       // totalQuantity(itemStored);
       // totalPrice(itemStored, kanapData);
-      window.location.reload();
+      window.location.reload();*/
+
+      if (quantityChoice.value > 100) {
+        alert("Vous ne pouvez pas acheter plus de 100 produits");
+        quantityChoice.value = 100;
+      }
+      else if (quantityChoice.value < 1) {
+        alert("Vous ne pouvez pas acheter moins de 1 produit");
+        quantityChoice.value = 1;
+      }
+      else {
+        itemStored[k].quantity = quantityChoice.value;
+        localStorage.setItem("userOrder", JSON.stringify(itemStored));
+         totalQuantity(itemStored);
+         // totalPrice(itemStored, kanapData);
+       // window.location.reload();
+ 
+       
+
+
+      }
     });
   }
+//////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////
   function displayQuantity() {
     const quantity = document.createElement("p");
     quantity.textContent = "Qté :";
@@ -233,7 +259,7 @@ orderBtn.addEventListener("click", (e) => {
     .then((data) => {
       const orderId = data.orderId;
       console.log(data);
-      alert("Votre commande a bien été prise en compte");
+        alert("Votre commande a bien été prise en compte, vous allez être redirigé vers la page de confirmation, KANAP vous remercie ");
       localStorage.clear();
 
       window.location.href = "confirmation.html" + "?orderId=" + orderId;
