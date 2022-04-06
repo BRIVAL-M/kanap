@@ -83,86 +83,129 @@ function deleteProduct(itemStored, k) {
 
 function cart(itemStored, k, kanapData) {
 
-  const cartItems = document.createElement("article");
-  cartItems.dataset.id = itemStored[k].id;
-  cartItems.dataset.colors = itemStored[k].colors;
-  cartItems.classList.add("cart__item");
-  const cartDisplay = document.querySelector("#cart__items");
-  cartDisplay.appendChild(cartItems);
+  const cartItems = displayArticle();
 
-  const divImg = document.createElement("div");
-  divImg.classList.add("cart__item__img");
-  cartItems.appendChild(divImg);
-  const img = document.createElement("img");
-  img.src = kanapData.imageUrl;
-  img.alt = kanapData.altTxt;
-  divImg.appendChild(img);
+  displayImg();
 
-  const divContent = document.createElement("div");
-  cartItems.appendChild(divContent);
-  divContent.classList.add("cart__item__content");
-  const divDescript = document.createElement("div");
-  divContent.appendChild(divDescript);
-  divDescript.classList.add("cart__item__content__description");
+  const { divDescript, divContent } = displayDivContent();
 
-  const Kname = document.createElement("h2");
-  Kname.textContent = kanapData.name;
-  divDescript.appendChild(Kname);
+  displayDescription();
 
-  const descr = document.createElement("p");
-  descr.textContent = itemStored[k].colors;
-  divDescript.appendChild(descr);
+  const divContentSettings = displayDivSetting();
 
-  const price = document.createElement("p");
-  price.textContent = itemStored[k].quantity * kanapData.price + " €";
+  const divSettingsQuantity = displayDivQuantity();
 
-  divDescript.appendChild(price);
-  const divContentSettings = document.createElement("div");
-  divContent.appendChild(divContentSettings);
-  divContentSettings.classList.add("cart__item__content__settings");
+  const quantity = displayQuantity();
 
-  const divSettingsQuantity = document.createElement("div");
-  divContentSettings.appendChild(divSettingsQuantity);
-  divSettingsQuantity.classList.add("cart__item__content__settings__quantity");
+  input();
 
-  const quantity = document.createElement("p");
-  quantity.textContent = "Qté :"
+  const divSettingsDelete = displayDivDelete();
 
+  deleteBtn();
 
-  divSettingsQuantity.appendChild(quantity);
+  function deleteBtn() {
+    const deleteItem = document.createElement("p");
+    deleteItem.textContent = "Supprimer";
+    divSettingsDelete.appendChild(deleteItem);
+    deleteItem.classList.add("deleteItem");
+  }
+
+  function displayDivDelete() {
+    const divSettingsDelete = document.createElement("div");
+    divContentSettings.appendChild(divSettingsDelete);
+    divSettingsDelete.classList.add("cart__item__content__settings__delete");
+    return divSettingsDelete;
+  }
+
+  function input() {
+    const quantityChoice = document.createElement("input");
+    quantityChoice.style.marginLeft = "10px";
+    quantity.appendChild(quantityChoice);
+    quantityChoice.classList.add("itemQuantity");
+    quantityChoice.name = "itemQuantity";
+    quantityChoice.type = "number";
+    quantityChoice.min = "1";
+    quantityChoice.max = "100";
+    quantityChoice.value = itemStored[k].quantity;
+    
 
 
-  const quantityChoice = document.createElement("input");
-  quantityChoice.style.marginLeft = "10px";
-  quantity.appendChild(quantityChoice);
-  quantityChoice.classList.add("itemQuantity");
-  quantityChoice.name = "itemQuantity";
-  quantityChoice.type = "number";
-  quantityChoice.min = "1";
-  quantityChoice.max = "100";
-  quantityChoice.value = itemStored[k].quantity;
 
-  ///////////////////Start => addEventListener pour la quantité //////////////////////////////// fonctionne presque ...
 
-  quantityChoice.addEventListener("change", () => { // il fait buger la quantité totale...
+    quantityChoice.addEventListener("change", () => {
 
-    itemStored[k].quantity = quantityChoice.value;
-    localStorage.setItem("userOrder", JSON.stringify(itemStored));
-    // totalQuantity(itemStored);
-    // totalPrice(itemStored, kanapData);
+      itemStored[k].quantity = quantityChoice.value;
+      localStorage.setItem("userOrder", JSON.stringify(itemStored));
+      // totalQuantity(itemStored);
+      // totalPrice(itemStored, kanapData);
+      window.location.reload();
+    });
+  }
 
-    window.location.reload();
-  });
+  function displayQuantity() {
+    const quantity = document.createElement("p");
+    quantity.textContent = "Qté :";
+    divSettingsQuantity.appendChild(quantity);
+    return quantity;
+  }
 
-  //////////////////////End => addEventListener//////////////////////////////////////////
+  function displayDivQuantity() {
+    const divSettingsQuantity = document.createElement("div");
+    divContentSettings.appendChild(divSettingsQuantity);
+    divSettingsQuantity.classList.add("cart__item__content__settings__quantity");
+    return divSettingsQuantity;
+  }
 
-  const divSettingsDelete = document.createElement("div");
-  divContentSettings.appendChild(divSettingsDelete);
-  divSettingsDelete.classList.add("cart__item__content__settings__delete");
-  const deleteItem = document.createElement("p");
-  deleteItem.textContent = "Supprimer";
-  divSettingsDelete.appendChild(deleteItem);
-  deleteItem.classList.add("deleteItem");
+  function displayDivSetting() {
+    const divContentSettings = document.createElement("div");
+    divContent.appendChild(divContentSettings);
+    divContentSettings.classList.add("cart__item__content__settings");
+    return divContentSettings;
+  }
+
+  function displayDescription() {
+    const Kname = document.createElement("h2");
+    Kname.textContent = kanapData.name;
+    divDescript.appendChild(Kname);
+
+    const descr = document.createElement("p");
+    descr.textContent = itemStored[k].colors;
+    divDescript.appendChild(descr);
+
+    const price = document.createElement("p");
+    price.textContent = itemStored[k].quantity * kanapData.price + " €";
+    divDescript.appendChild(price);
+  }
+
+  function displayDivContent() {
+    const divContent = document.createElement("div");
+    cartItems.appendChild(divContent);
+    divContent.classList.add("cart__item__content");
+    const divDescript = document.createElement("div");
+    divContent.appendChild(divDescript);
+    divDescript.classList.add("cart__item__content__description");
+    return { divDescript, divContent };
+  }
+
+  function displayImg() {
+    const divImg = document.createElement("div");
+    divImg.classList.add("cart__item__img");
+    cartItems.appendChild(divImg);
+    const img = document.createElement("img");
+    img.src = kanapData.imageUrl;
+    img.alt = kanapData.altTxt;
+    divImg.appendChild(img);
+  }
+
+  function displayArticle() {
+    const cartItems = document.createElement("article");
+    cartItems.dataset.id = itemStored[k].id;
+    cartItems.dataset.colors = itemStored[k].colors;
+    cartItems.classList.add("cart__item");
+    const cartDisplay = document.querySelector("#cart__items");
+    cartDisplay.appendChild(cartItems);
+    return cartItems;
+  }
 }
 
 ///////formulaire de commande ///////////////
