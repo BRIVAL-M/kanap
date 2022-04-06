@@ -96,7 +96,8 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
     //////////////////////////// localStorage /////////////////////////////////////
 
     const addKanaps = () => { //"addKanaps" va reprendre les données de kanapData et les transformer en chaine json
-       
+     
+        
         itemStored.push(kanapData);
         localStorage.setItem("userOrder", JSON.stringify(itemStored))
 }
@@ -105,14 +106,18 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
   
 let itemStored = JSON.parse(localStorage.getItem("userOrder"));
 // récupère les données de "kanapOrderData" en objet JS 
- 
+//const add = addQuantity();
     
     if (itemStored) {// Si il y a déjà des items dans le localStorage
         // changer ici pour incrémenter quantité
        
-         addKanaps()
+     
+        addKanaps()
 
-     console.log(itemStored)// <--------------- A delete
+//addQuantity()
+
+        
+        console.log(itemStored)// <--------------- A delete
     }
 
     else {
@@ -123,3 +128,33 @@ let itemStored = JSON.parse(localStorage.getItem("userOrder"));
        
     }
 })
+/*  if (itemStored.id == itemStored.id && itemStored.colors == itemStored) {
+           itemStored.quantity += quantity;
+           
+           if((itemStored.id == itemStored.id && itemStored.colors !== itemStored.colors)){
+            itemStored = {
+                id,
+                colors,
+                quantity
+          }
+          
+           }
+       } */
+
+// 
+/*function addQuantity(kanapData) {
+    let itemStored = JSON.parse(localStorage.getItem("userOrder"));
+    itemStored.forEach(item => {
+        if (item.id == id && item.colors == colors) {
+            item.quantity += quantity;
+        }
+        else {
+            if (item.id == id && item.colors !== colors) {
+                itemStored.push(kanapData);
+                localStorage.setItem("userOrder", JSON.stringify(itemStored))
+            }
+        }
+    
+    }) 
+}*/
+

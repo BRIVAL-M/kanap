@@ -71,11 +71,11 @@ function deleteProduct(itemStored, k) {
   deleteBtn[k].addEventListener("click", () => {
     itemStored.splice(k, 1);// on delete 1 produit de la liste a l'index k
     localStorage.setItem("userOrder", JSON.stringify(itemStored));
+    if(itemStored.length === 0){
+      localStorage.clear();
+    }
 
-    // si le itemStored est vide affiche le message  emptyMsg()
-    /*if (itemStored.length === 0) { // <<<<< ne fonctionne pas :/
-      emptyMsg();
-    }*/
+  
     alert("Ce Kanap vient d'être supprimé de votre panier");
     window.location.reload();
   });
@@ -128,10 +128,6 @@ function cart(itemStored, k, kanapData) {
     quantityChoice.max = "100";
     quantityChoice.value = itemStored[k].quantity;
     
-
-
-
-
     quantityChoice.addEventListener("change", () => {
 
       itemStored[k].quantity = quantityChoice.value;
