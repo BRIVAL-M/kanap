@@ -4,7 +4,7 @@ const idLocations = window.location.search;
 const urlObjet = new URLSearchParams(idLocations);
 // Le URLSearchParams()constructeur crée et retourne un nouvel URLSearchParamsobjet.
 const id = urlObjet.get('id');
-// rècupère URLSearchParamsobjet dans id
+// récupère URLSearchParamsobjet dans id
 
 console.table({ id }) //<------------------ A DELETE
 
@@ -78,9 +78,7 @@ function kanaps(productPage) {
 
 ///////////////////////BUTTON//////////////////////////
 
-
 const button = document.getElementById('addToCart')// je selectionne le button dans le DOM
-
 
 button.addEventListener("click", () => {// je lui demande d'écouter l'event au clic
     
@@ -89,12 +87,11 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
     
     console.log(colors, quantity);// <------ A delete
 
-    if (colors == null || colors == "" || quantity == null || quantity == 0 || quantity == "") {// revoir les if color & quantity + (max100)
-        alert("Pourriez-vous nous indiquer la couleur et le nombre de Kanaps que vous souhaitez commander s'il vous plaît 🙏")// si rien n'est sélectionné message 
-        
+    if (colors == null || colors == "" || quantity == null || quantity == 0 || quantity == "") {
+        alert("Pourriez-vous nous indiquer la couleur et le nombre de Kanaps que vous souhaitez commander s'il vous plaît 🙏")
+        // si rien n'est sélectionné message 
         return // il stop
-
-    }
+}
 
     //////////////////////////// localStorage /////////////////////////////////////
 
@@ -102,25 +99,20 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
        
         itemStored.push(kanapData);
         localStorage.setItem("userOrder", JSON.stringify(itemStored))
-       //localStorage.setItem(id, JSON.stringify(itemsStorage));;// Pour les enregistrer dans le localStorage avec la clef "kanapOrderData" <--------------------A REMETTRE AU CAS OU 
-    }
+}
 
     let kanapData = { id, colors, quantity };// "kanapData" contient les données des Kanaps
   
 let itemStored = JSON.parse(localStorage.getItem("userOrder"));
-   //let itemsStorage = JSON.parse(localStorage.getItem(id));// récupère les données de "kanapOrderData" en objet JS <--------------------A REMETTRE AU CAS OU
+// récupère les données de "kanapOrderData" en objet JS 
  
     
     if (itemStored) {// Si il y a déjà des items dans le localStorage
         // changer ici pour incrémenter quantité
        
-        
-        addKanaps()
+         addKanaps()
 
-
-
-        
-        console.log(itemStored)// <--------------- A delete
+     console.log(itemStored)// <--------------- A delete
     }
 
     else {
