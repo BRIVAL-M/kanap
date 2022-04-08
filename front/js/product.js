@@ -86,81 +86,75 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
     const quantity = document.querySelector("#quantity").value;
     
     console.log(colors, quantity);// <------ A delete
- 
+    //si la couleur et id sont egale on increment la quantité
+    
+  
+    
+   
+        
    
 
     if (colors == null || colors == "" || quantity == null || quantity == "" ||quantity > 100 || quantity < 1) {
         alert("Pourriez-vous nous indiquer une couleur et une quantité entre 1 et 100 pour poursuivre votre commande s'il vous plaît 🙏")
         // si rien n'est sélectionné message 
         return // il stop
+       
         
 }
+
+    
 
 
 
     //////////////////////////// localStorage /////////////////////////////////////
 
-    const addKanaps = () => { //"addKanaps" va reprendre les données de kanapData et les transformer en chaine json
+    const addKanaps = () => { 
      
         
-        itemStored.push(kanapData);
-        localStorage.setItem("userOrder", JSON.stringify(itemStored))
-}
-
-    let kanapData = { id, colors, quantity };// "kanapData" contient les données des Kanaps
-  
-let itemStored = JSON.parse(localStorage.getItem("userOrder"));
-// récupère les données de "kanapOrderData" en objet JS 
-//const add = addQuantity();
-    
-    if (itemStored) {// Si il y a déjà des items dans le localStorage
-        // changer ici pour incrémenter quantité
+            const find = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
         
-       
-        addKanaps()
-
-//addQuantity()
-
-        
-        console.log(itemStored)// <--------------- A delete
-    }
-
-    else {
-
-        itemStored = [];
-
-        addKanaps()
-       
-    }
-})
-/*  if (itemStored.id == itemStored.id && itemStored.colors == itemStored) {
-           itemStored.quantity += quantity;
-           
-           if((itemStored.id == itemStored.id && itemStored.colors !== itemStored.colors)){
-            itemStored = {
-                id,
-                colors,
-                quantity
-          }
-          
-           }
-       } */
-
-// 
-/*function addQuantity(kanapData) {
-    let itemStored = JSON.parse(localStorage.getItem("userOrder"));
-    itemStored.forEach(item => {
-        if (item.id == id && item.colors == colors) {
-            item.quantity += quantity;
-        }
-        else {
-            if (item.id == id && item.colors !== colors) {
+           if (find) {
+                find.quantity = Number(find.quantity);
+                find.quantity = +quantity;
+            } else {
                 itemStored.push(kanapData);
-                localStorage.setItem("userOrder", JSON.stringify(itemStored))
             }
+            localStorage.setItem("userOrder", JSON.stringify(itemStored))
+        
         }
+  
+      let kanapData = { 
+          id :id, 
+          colors :colors, 
+          quantity :Number(quantity), 
+        };// "kanapData" contient les données des Kanaps
     
-    }) 
-}*/
+  let itemStored = JSON.parse(localStorage.getItem("userOrder"));
+  // récupère les données de "kanapOrderData" en objet JS 
+  //const add = addQuantity();
+      
+      if (itemStored) {// Si il y a déjà des items dans le localStorage
+          
+          
+         
+          addKanaps();
+  
+
+  
+          
+          console.log(itemStored)// <--------------- A delete
+      }
+  
+      else {
+  
+          itemStored = [];
+  
+          addKanaps()
+         
+      }
+  })
+  
+  
+  
 
 
