@@ -23,8 +23,8 @@ function kanapImg(imageUrl, altTxt) {
     kanapImg.src = imageUrl;
     kanapImg.alt = altTxt;
 
-    const imgSpot = document.querySelector(".item__img");
-    imgSpot.appendChild(kanapImg);
+    const imgDisplay = document.querySelector(".item__img");
+    imgDisplay.appendChild(kanapImg);
 }
 
 function kanapName(name) {
@@ -111,11 +111,11 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
     const addKanaps = () => { 
      
         
-            const find = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
+            const findKanap = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
         
-           if (find) {
-                find.quantity = Number(find.quantity);
-                find.quantity = +quantity;
+           if (findKanap) {
+                findKanap.quantity = Number(findKanap.quantity);
+                findKanap.quantity = +quantity;
             } else {
                 itemStored.push(kanapData);
             }
