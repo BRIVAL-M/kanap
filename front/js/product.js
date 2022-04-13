@@ -1,4 +1,4 @@
-const idLocations = window.location.search;
+const idLocations = window.location.search;//
 // recupère la chaîne de requête soit l'id unique des kanaps 
 // ex: ?id=055743915a544fde83cfdfc904935ee7
 const urlObjet = new URLSearchParams(idLocations);
@@ -10,9 +10,9 @@ console.table({ id }) //<------------------ A DELETE
 
 //////////////////////////////////juste pour moi///////////////////////////
 
-fetch(`http://localhost:3000/api/products/${id}`)//<------------------ A DELETE
-    .then(res => res.json())
-    .then(response => console.table(response))
+// fetch(`http://localhost:3000/api/products/${id}`)
+//     .then(res => res.json())
+//     .then(response => console.table(response))
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -59,12 +59,23 @@ function kanapColor(colors) {
         console.log(option); // <----------------------------- A delete
     })
 }
+function displayError() {
+    const error = document.createElement("p");
+    error.textContent = " OUPS ! Une erreur est survenue, veuillez réessayer ultérieurement. Si le problème persiste contactez-nous par téléphone au : 01 23 45 67 89 ou par mail : support@name.com ";
+    error.style.textAlign = "center";
+    const oups = document.querySelector(".item__img");
+    oups.appendChild(error);
+}
 
 
 fetch(`http://localhost:3000/api/products/${id}`)
     .then(response => response.json())
     .then((res) => kanaps(res))
-
+   
+    .catch(() => {
+        displayError();
+ })
+  
 function kanaps(productPage) {
 
     const { imageUrl, altTxt, name, price, description, colors } = productPage;
@@ -74,7 +85,14 @@ function kanaps(productPage) {
     kanapPrice(price)
     kanapDescript(description)
     kanapColor(colors)
+   
+   
 }
+
+
+
+
+
 
 ///////////////////////BUTTON//////////////////////////
 
@@ -112,10 +130,13 @@ button.addEventListener("click", () => {// je lui demande d'écouter l'event au 
      
         
             const findKanap = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
-        
+            // ici je vérifie si le produit est déjà dans le panier
+
+
            if (findKanap) {
+            
                 findKanap.quantity = Number(findKanap.quantity);
-                findKanap.quantity = +quantity;
+                findKanap.quantity = +quantity;//
             } else {
                 itemStored.push(kanapData);
             }
