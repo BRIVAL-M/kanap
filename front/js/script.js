@@ -1,3 +1,5 @@
+// Affiche un message d'erreur dans le DOM si la requête n'a pas abouti
+// Displays an error message in the DOM if the request has not succeeded
 function displayError() {
     const error = document.createElement("p");
     error.textContent = " OUPS ! Une erreur est survenue, veuillez réessayer ultérieurement. Si le problème persiste contactez-nous par téléphone au : 01 23 45 67 89 ou par mail : support@name.com ";
@@ -7,6 +9,8 @@ function displayError() {
     oups.appendChild(error);
 }
 
+// Crée les articles dans le DOM et les affiche
+// Creates the articles in the DOM and displays them
 function kanapCards(cards) {
     const { _id, imageUrl, altTxt, name, description } = cards;
     const items = document.querySelector("#items");
@@ -38,22 +42,21 @@ function kanapCards(cards) {
     card.appendChild(descriptCard);
 }
 
-
+// Va chercher les données necessaires à la création des articles dans le fichier JSON
+// Retrieves the data necessary to create the articles in the JSON file
 fetch("http://localhost:3000/api/products")
     .then(firstRes => firstRes.json())
     .then((kanapData) => {
-
-        console.table(kanapData);
 
         kanapData.forEach((cards) => {
 
             kanapCards(cards);
 
         })
-      
-}).catch(() => {
-    displayError();
-})
+
+    }).catch(() => {
+        displayError();
+    })
 
 
 

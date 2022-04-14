@@ -1,22 +1,16 @@
 const idLocations = window.location.search;//
-// recupère la chaîne de requête soit l'id unique des kanaps 
+// Recupère la chaîne de requête soit l'id unique des kanaps
+// Retrieves the query string or the unique id of the kanaps 
 // ex: ?id=055743915a544fde83cfdfc904935ee7
 const urlObjet = new URLSearchParams(idLocations);
 // Le URLSearchParams()constructeur crée et retourne un nouvel URLSearchParamsobjet.
+// The URLSearchParams() constructor creates and returns a new URLSearchParams object.
 const id = urlObjet.get('id');
-// récupère URLSearchParamsobjet dans id
+// Récupère URLSearchParamsobjet dans id
+// Retrieves URLSearchParamsobject in id
 
-console.table({ id }) //<------------------ A DELETE
-
-//////////////////////////////////juste pour moi///////////////////////////
-
-// fetch(`http://localhost:3000/api/products/${id}`)
-//     .then(res => res.json())
-//     .then(response => console.table(response))
-
-//////////////////////////////////////////////////////////////////////////
-
-
+// Crée une image et son altTxt et l'affiche dans le DOM
+// Creates an image and its altTxt and displays it in the DOM 
 function kanapImg(imageUrl, altTxt) {
 
     const kanapImg = document.createElement("img");
@@ -26,25 +20,29 @@ function kanapImg(imageUrl, altTxt) {
     const imgDisplay = document.querySelector(".item__img");
     imgDisplay.appendChild(kanapImg);
 }
-
+// Affiche le nom du produit dans le DOM
+// Displays the name of the product in the DOM
 function kanapName(name) {
 
     const kanapName = document.querySelector("#title");
     kanapName.textContent = name;
 }
-
+// Affiche le prix du produit dans le DOM
+// Displays the price of the product in the DOM
 function kanapPrice(price) {
 
     const kanapPrice = document.querySelector("#price");
     kanapPrice.textContent = price;
 }
-
+// Affiche la description du produit dans le DOM
+// Displays the description of the product in the DOM
 function kanapDescript(description) {
 
     const kanapDescript = document.querySelector("#description");
     kanapDescript.textContent = description;
 }
-
+// Affiche les couleurs du produit dans le DOM
+// Displays the colors of the product in the DOM
 function kanapColor(colors) {
 
     const choice = document.querySelector("#colors");
@@ -55,11 +53,12 @@ function kanapColor(colors) {
         option.value = choices;
         option.textContent = choices;
         choice.appendChild(option);
-
-        console.log(option); // <----------------------------- A delete
     })
 }
+// Affiche un message d'erreur dans le DOM si la requête n'a pas abouti
+// Displays an error message in the DOM if the request has not succeeded
 function displayError() {
+
     const error = document.createElement("p");
     error.textContent = " OUPS ! Une erreur est survenue, veuillez réessayer ultérieurement. Si le problème persiste contactez-nous par téléphone au : 01 23 45 67 89 ou par mail : support@name.com ";
     error.style.textAlign = "center";
@@ -67,15 +66,17 @@ function displayError() {
     oups.appendChild(error);
 }
 
-
+// Va chercher les données du produit dans le fichier JSON à l'aide de l'id unique
+// Gets the data of the product in the JSON file using the unique id
 fetch(`http://localhost:3000/api/products/${id}`)
     .then(response => response.json())
     .then((res) => kanaps(res))
-   
+
     .catch(() => {
         displayError();
- })
-  
+    })
+// Affichage des données du produit dans le DOM
+//  Displays the data of the product in the DOM 
 function kanaps(productPage) {
 
     const { imageUrl, altTxt, name, price, description, colors } = productPage;
@@ -85,97 +86,77 @@ function kanaps(productPage) {
     kanapPrice(price)
     kanapDescript(description)
     kanapColor(colors)
-   
-   
+
+
 }
-
-
-
-
-
-
 ///////////////////////BUTTON//////////////////////////
 
-const button = document.getElementById('addToCart')// je selectionne le button dans le DOM
 
-button.addEventListener("click", () => {// je lui demande d'écouter l'event au clic
-    
-    const colors = document.querySelector("#colors").value;// ici je lui demande la couleur et la quantité sélectionné
+// Selectionne le bouton "ajouter au panier"
+// Selects the "add to cart" button
+const button = document.getElementById('addToCart')
+
+// Ecoute l'événement click sur le bouton
+// Listens for the click event on the button
+button.addEventListener("click", () => {
+
+    const colors = document.querySelector("#colors").value;
     const quantity = document.querySelector("#quantity").value;
-    
-    console.log(colors, quantity);// <------ A delete
-    //si la couleur et id sont egale on increment la quantité
-    
-  
-    
-   
-        
-   
 
-    if (colors == null || colors == "" || quantity == null || quantity == "" ||quantity > 100 || quantity < 1) {
+    if (colors == null || colors == "" || quantity == null || quantity == "" || quantity > 100 || quantity < 1) {
         alert("Pourriez-vous nous indiquer une couleur et une quantité entre 1 et 100 pour poursuivre votre commande s'il vous plaît 🙏")
-        // si rien n'est sélectionné message 
-        return // il stop
-       
-        
-}
 
-    
-
-
+        return
+    }
 
     //////////////////////////// localStorage /////////////////////////////////////
 
-    const addKanaps = () => { 
-     
-        
-            const findKanap = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
-            // ici je vérifie si le produit est déjà dans le panier
+    // Ajoute le produit au panier
+    // Adds the product to the cart
+    const addKanaps = () => {
 
+        // Vérifier si le produit est déjà dans le panier
+        // Check if the product is already in the cart
+        const findKanap = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
 
-           if (findKanap) {
-            
-                findKanap.quantity = Number(findKanap.quantity);
-                findKanap.quantity = +quantity;//
-            } else {
-                itemStored.push(kanapData);
-            }
-            localStorage.setItem("userOrder", JSON.stringify(itemStored))
-        
+        if (findKanap) {
+
+            findKanap.quantity = Number(findKanap.quantity);
+            findKanap.quantity = +quantity;//
+
+        } else {
+            itemStored.push(kanapData);
+
         }
-  
-      let kanapData = { 
-          id :id, 
-          colors :colors, 
-          quantity :Number(quantity), 
-        };// "kanapData" contient les données des Kanaps
-    
-  let itemStored = JSON.parse(localStorage.getItem("userOrder"));
-  // récupère les données de "kanapOrderData" en objet JS 
-  //const add = addQuantity();
-      
-      if (itemStored) {// Si il y a déjà des items dans le localStorage
-          
-          
-         
-          addKanaps();
-  
 
-  
-          
-          console.log(itemStored)// <--------------- A delete
-      }
-  
-      else {
-  
-          itemStored = [];
-  
-          addKanaps()
-         
-      }
-  })
-  
-  
-  
+        localStorage.setItem("userOrder", JSON.stringify(itemStored))
+
+    }
+
+    let kanapData = {
+        id: id,
+        colors: colors,
+        quantity: Number(quantity),
+    };
+
+    let itemStored = JSON.parse(localStorage.getItem("userOrder"));
+
+    if (itemStored) {
+
+        addKanaps();
+    }
+
+    else {
+
+        itemStored = [];
+        addKanaps()
+    }
+})
+
+
+
+
+
+
 
 

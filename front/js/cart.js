@@ -1,41 +1,39 @@
+let kanaps;
 
+// Va chercher les données des produits dans l'API
+// Fetch product data from the API
 fetch("http://localhost:3000/api/products")
   .then(firstRes => firstRes.json())
   .then((kanapData) => {
-    console.log(kanapData)
-
+    kanaps = kanapData;
     let itemStored = JSON.parse(localStorage.getItem("userOrder"));
-    console.log(itemStored)
 
     if (itemStored === null) {
 
       emptyMsg();
-      return// si le panier est vide affiche le message et stop la fonction
+      return
     }
 
-    for (let k = 0; k < itemStored.length; k++) {// sert a boucle sur
+    for (let k = 0; k < itemStored.length; k++) {
 
       const myKanap = kanapData.find(_item => _item._id == itemStored[k].id)
-
 
       if (myKanap) {
 
         cart(itemStored, k, myKanap);
         totalQuantity(itemStored);
-        totalPrice(itemStored, kanapData)
+        totalPrice(itemStored, kanaps)
         deleteProduct(itemStored, k);
       }
-
-
-
     }
 
 
   }).catch(() => {
     displayError();
-   
-})
 
+  })
+// Affichage un message si la requête a échoué
+// Displays a message if the request failed
 function displayError() {
   const error = document.createElement("p");
   error.textContent = " OUPS ! Une erreur est survenue, veuillez réessayer ultérieurement. Si le problème persiste contactez-nous par téléphone au : 01 23 45 67 89 ou par mail : support@name.com ";
@@ -44,7 +42,8 @@ function displayError() {
   const oups = document.querySelector("#cart__items");
   oups.appendChild(error);
 }
-
+// Affiche un message si le panier est vide
+// Displays a message if the cart is empty
 function emptyMsg() {
   const emptyBasket = document.createElement("h2");
   emptyBasket.textContent = " Votre panier est vide, n'hésitez pas à consulter notre site afin de trouver le KANAP de vos rêves !";
@@ -54,16 +53,9 @@ function emptyMsg() {
   emptyPlace.appendChild(emptyBasket);
 }
 
-
-
-
-
-
-
-
-// calcul le nombre de produit total dans le panier
+// Calcule le nombre de produit total dans le panier
+// Calcule the total number of products in the cart
 function totalQuantity(itemStored) {
-
 
   let totalQuantity = 0;
   for (let i = 0; i < itemStored.length; i++) {
@@ -72,85 +64,30 @@ function totalQuantity(itemStored) {
   const total = document.querySelector("#totalQuantity");
 
   total.textContent = totalQuantity;
-  console.log(totalQuantity)
-
-
-
-
 
 }
 
-//}
-
-
-
+// Calcule le prix total
+// Calculate the total price
 function totalPrice(itemStored, kanapData) {
-
- 
 
   let totalPrice = 0;
   for (let i = 0; i < itemStored.length; i++) {
+
     const myKanap = kanapData.find(_item => _item._id === itemStored[i].id)
-    console.log(myKanap)
-
-
-
     totalPrice += myKanap.price * itemStored[i].quantity;
-    console.log(totalPrice)
-
   }
+
   const totalP = document.querySelector("#totalPrice");
   totalP.textContent = totalPrice;
-
-  /////////////////////////////////
-
-  //totalP.innerHtml = `${totalPrice}`;
-
-
 }
 
-
-
-
-
-
-
-//  if (totalPrice ===0){
-//   for (let i = 0; i < itemStored.length; i++) {
-//     const myKanap = kanapData.find(_item => _item._id === itemStored[i].id)
-//     console.log(myKanap)
-
-//     totalPrice += myKanap.price * itemStored[i].quantity ;
-//     console.log(totalPrice)
-//   }
-//   const totalP = document.querySelector("#totalPrice");
-//   totalP.textContent = totalPrice;
-//  }
-//  else if (totalPrice !=0 ){
-//    totalPrice += totalPrice * selectUrQuantity();
-//    console.log(Number(quantityChoice.value))
-//  }
-
-
-
-
-
-
-
-
-//}
-
-
-
-
-
-
-
-
-
-//fonction pour Supprimer un produit du panier
+// Supprime un produit du panier
+// Delete a product from the cart
 function deleteProduct(itemStored, k) {
+
   const deleteBtn = document.querySelectorAll(".deleteItem");
+
   deleteBtn[k].addEventListener("click", () => {
     itemStored.splice(k, 1);// on delete 1 produit de la liste a l'index k
     localStorage.setItem("userOrder", JSON.stringify(itemStored));
@@ -158,12 +95,13 @@ function deleteProduct(itemStored, k) {
       localStorage.clear();
     }
 
-
     alert("Ce Kanap vient d'être supprimé de votre panier");
     window.location.reload();
   });
 }
 
+// Crée les articles dans le DOM et les affichages
+// Create the articles in the DOM and displays them
 function cart(itemStored, k, kanapData) {
 
   const cartItems = displayArticle();
@@ -186,20 +124,24 @@ function cart(itemStored, k, kanapData) {
 
   deleteBtn();
 
+  // Crée le "bouton" pour supprimer un produit
+  // Creates the "button" to delete a product
   function deleteBtn() {
     const deleteItem = document.createElement("p");
     deleteItem.textContent = "Supprimer";
     divSettingsDelete.appendChild(deleteItem);
     deleteItem.classList.add("deleteItem");
   }
-
+  // Crée une div
+  // Creates a div
   function displayDivDelete() {
     const divSettingsDelete = document.createElement("div");
     divContentSettings.appendChild(divSettingsDelete);
     divSettingsDelete.classList.add("cart__item__content__settings__delete");
     return divSettingsDelete;
   }
-
+  // Crée une input
+  // Creates an input
   function input() {
     const quantityChoice = document.createElement("input");
     quantityChoice.style.marginLeft = "10px";
@@ -210,42 +152,11 @@ function cart(itemStored, k, kanapData) {
     quantityChoice.min = "1";
     quantityChoice.max = "100";
     quantityChoice.value = itemStored[k].quantity;
-    quantityChoice.addEventListener("change", (e) => selectUrQuantity(e));// plus besoin de event
+    quantityChoice.addEventListener("change", () => selectUrQuantity());
 
-    ///////////////////////////////////////////////////////////////////////////////
-
-
-
-    function selectUrQuantity(e) {
-      //    // console.log(id)
-      //     console.log(itemStored[k].id)
-      //     itemStored[k].quantity = Number(quantityChoice.value);
-      //        localStorage.setItem("userOrder", JSON.stringify(itemStored));
-      //       // totalQuantity(itemStored);
-      //        console.log(itemStored[k].quantity)
-
-
-      //        let totalQuantity = 0;
-      //   for (let i = 0; i < itemStored.length; i++) {
-      //   totalQuantity += +itemStored[i].quantity;
-      //   console.log(totalQuantity)
-      // }
-      // const total = document.querySelector("#totalQuantity");
-
-      // total.textContent = totalQuantity ;
-
-      //     let totalPrice = 0;
-      //         totalPrice += kanapData.price * itemStored[k].quantity;
-      //         console.log(totalPrice)
-
-      //         const totalP = document.querySelector("#totalPrice");
-      //         totalP.textContent = totalPrice
-
-
-
-      //  quantityChoice.addEventListener("change", (e) => {
-
-
+    // Enregristre la quantité choisie et recalcule le prix total ainsi que le nombre de produit total
+    // Saves the selected quantity and recalculates the total price and the total number of products
+    function selectUrQuantity() {
 
       if (quantityChoice.value > 100) {
         alert("Vous ne pouvez pas acheter plus de 100 Kanaps");
@@ -255,283 +166,40 @@ function cart(itemStored, k, kanapData) {
         alert("Vous ne pouvez pas acheter moins de 1 Kanap");
         quantityChoice.value = 1;
       }
-      //else {
-      //    itemStored[k].quantity = Number(quantityChoice.value);
-      //  localStorage.setItem("userOrder", JSON.stringify(itemStored));
-      //     const newQuantity = Number(quantityChoice.value);
-      //   console.log(newQuantity)
 
-      // if (e) {
-      //////////////Start try 1///////////////////
-      //         console.log("OLD QUANTITY de l'input IS :",itemStored[k].quantity)
-      //         //recuper la nouvelle quantité
-      //         const newQuantity = Number(quantityChoice.value) ;
-      //         console.log("NEW QUANTITY de  l'input IS :",newQuantity)
-      //         itemStored[k].quantity = Number(quantityChoice.value) ;
-
-      //         localStorage.setItem("userOrder", JSON.stringify(itemStored));
-
-      //        const finalQuantity = itemStored.reduce((acc, item) => acc + item.quantity, 0);
-
-      //        localStorage.setItem("userOrder", JSON.stringify(itemStored));
-
-
-      //         console.log("FINAL QUANTITY du localStorage IS :",finalQuantity)
-      //         //recuper le prix
-      //         const price = kanapData.price;
-      //         console.log("UniT PRICE IS :",price)
-
-      //          const newTotalPrice = finalQuantity * price;
-      //          console.log("NEW PRICE Unit IS :",newTotalPrice)
-      //         ///////////////////////////////////////////////
-      //         const total = document.querySelector("#totalPrice");
-      //         total.textContent = newTotalPrice;
-      //         /////////////////////////////////////
-      // totalQuantity(itemStored);
-      //         /////////////////////end try 1//////////////////////////
-
-
-      // ////////////////////// start try 2 ///////////////////////////
-      // itemStored[k].quantity = Number(quantityChoice.value);
-      //         localStorage.setItem("userOrder", JSON.stringify(itemStored));
-
-      //         totalQuantity(itemStored);
-      //         const finalQuantity = itemStored.reduce((acc, item) => acc + item.quantity, 0);
-
-      //         const price = kanapData.price;
-      //         const newTotalPrice = price * finalQuantity;
-
-      //         const total = document.querySelector("#totalPrice");
-      //         total.textContent = newTotalPrice;
-
-      ///////////////////////////// end try 2 ///////////////////////////////
-
-      ///////////////////////////// start try 3 ///////////////////////////////
-      //  itemStored[k].quantity = Number(quantityChoice.value);
-      //  localStorage.setItem("userOrder", JSON.stringify(itemStored));
-      //  const saveQuantity =  itemStored.reduce((acc, item) => acc + item.quantity, 0);
-      //  console.log(saveQuantity);
-      //  const price = kanapData.price * saveQuantity;
-      //  console.log(price);
-      // // const newTotalPrice = saveQuantity * price;
-      //  const total = document.querySelector("#totalPrice");
-      //  total.textContent =  price;
-
-      /////////////End try 3 /////////////////////////////
-      ///////////////////// ne sert a rien//////////////////////
-      // const price = kanapData.price;
-      // // recuperation de la quantité
-      // const newQuantity = Number(quantityChoice.value);
-      // // calcul du prix total
-      // const newTotalPrice = newQuantity * price;
-
-      // const total = document.querySelector("#totalPrice");
-      // // affichage du total
-      // total.textContent = newTotalPrice;
-
-
-      /////////////////////////////////////////////////
-
-      ////////////////////////////////////////////////////////////////////////
-      // if(e){
-      ////////////////////////////////////////// voilà nul mais au moins ça marche/////////////////////////
       itemStored[k].quantity = Number(quantityChoice.value);
       localStorage.setItem("userOrder", JSON.stringify(itemStored));
-      alert("Votre quantité a été mise à jour");
-      location.reload();
 
-      /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-      ///////////////////// Last try  nase !/////////////////////////////
-      //  itemStored[k].quantity = Number(quantityChoice.value);
-      //   localStorage.setItem("userOrder", JSON.stringify(itemStored));
-
-      //   const finalQuantity = itemStored.reduce((acc, item) => acc + item.quantity, 0);
-      //   console.log("La quatité finale dans le localStorage est :",finalQuantity);
-
-
-      //   let totalPrice = 0;
-
-      //   for (let i = 0; i < acc; i++) {
-      //     totalPrice += kanapData.price;
-      //   }
-      //   console.log("Le prix total de toutes les unités est :",totalPrice);
-
-      /////////////////////////////////////////////////////////////////////////
-
-
-
-      //
-
-
-
-
-
-      //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      totalQuantity(itemStored);
+      totalPrice(itemStored, kanaps)
     }
-
-
-
-
-
-
-
-    //}
-
-
-
-
-
-
-
-    // if(e.target.value !== itemStored[k].quantity){
-    //   itemStored[k].quantity = Number(quantityChoice.value);
-    //   localStorage.setItem("userOrder", JSON.stringify(itemStored));
-
-
-
-    // }
-
-
-    // localStorage.setItem("userOrder", JSON.stringify(itemStored));
-    // alert("Votre quantité a été modifiée");
-    // window.location.reload();
-    // on ajoute le prix total
-    // totalPrice(itemStored, kanapData);
-
-
-
-
-
-
-
-
-
-    //}
-
-
-
-
-
-
-
-
-    // localStorage.setItem("userOrder", JSON.stringify(itemStored));
-    //    totalQuantity(itemStored);
-    //      const newPrice = kanapData.find(_item => _item._id === itemStored[k].id)
-    //   itemStored[k].price = newPrice.price * itemStored[k].quantity;
-    //   localStorage.setItem("userOrder", JSON.stringify(itemStored));
-    //   const totalP = document.querySelector("#totalPrice");
-    // totalP.textContent = newPrice.price * itemStored[k].quantity;
-
-
-
-    // totalPrice(itemStored, kanapData);
-
-
-
-
-    //newPrice ()
-
-
-
-
-
-
-
-
-    // newValue = newValue * myKanapPrice;
-    // itemStored[k].price = newValue;
-    // localStorage.setItem("userOrder", JSON.stringify(itemStored));
-    // const totalPrice = document.querySelector("#totalPrice");
-    // totalPrice.textContent = itemStored[k].price;
-
-
-
-
-
-
-
-    //totalPrice();
-
-
-
-
-
-
-
-    // itemStored[k].quantity = Number(quantityChoice.value);
-    // console.log("quantityChoice.value", quantityChoice.value)
-    // localStorage.setItem("userOrder", JSON.stringify(itemStored));
-    // totalQuantity(itemStored);
-
-
-
-
-
-
-
-
-
   }
-
-
-
-
-
-  //selectUrQuantity();
-  // console.log(itemStored[k].quantity)
-
-
-
-  // end function input
-  //////////////////////////////////////////////////////
-  // function newPrice (){
-  //   const path = window.location.pathname;
-  //   const newPrice = path.find (_item => _item._id === itemStored[k].id)
-
-
-  //      itemStored[k].price = newPrice.price * itemStored[k].quantity;
-  //     localStorage.setItem("userOrder", JSON.stringify(itemStored));
-  //     const totalP = document.querySelector("#totalPrice");
-  //   totalP.textContent = newPrice.price * itemStored[k].quantity;
-  // }
-
+  // Affichage de la quantité
+  // Displays the quantity
   function displayQuantity() {
     const quantity = document.createElement("p");
     quantity.textContent = "Qté :";
     divSettingsQuantity.appendChild(quantity);
     return quantity;
   }
-
+  // Crée une div
+  // Creates a div
   function displayDivQuantity() {
     const divSettingsQuantity = document.createElement("div");
     divContentSettings.appendChild(divSettingsQuantity);
     divSettingsQuantity.classList.add("cart__item__content__settings__quantity");
     return divSettingsQuantity;
   }
-
+  // Crée une div
+  // Creates a div
   function displayDivSetting() {
     const divContentSettings = document.createElement("div");
     divContent.appendChild(divContentSettings);
     divContentSettings.classList.add("cart__item__content__settings");
     return divContentSettings;
   }
-
+  // Affichage le nom du produit
+  // Displays the product name
   function displayDescription() {
     const Kname = document.createElement("h2");
     Kname.textContent = kanapData.name;
@@ -542,10 +210,11 @@ function cart(itemStored, k, kanapData) {
     divDescript.appendChild(descr);
 
     const price = document.createElement("p");
-    price.textContent = itemStored[k].quantity * kanapData.price + " €";
+    price.textContent = kanapData.price + " €";
     divDescript.appendChild(price);
   }
-
+  // Crée une div
+  // Creates a div
   function displayDivContent() {
     const divContent = document.createElement("div");
     cartItems.appendChild(divContent);
@@ -555,7 +224,8 @@ function cart(itemStored, k, kanapData) {
     divDescript.classList.add("cart__item__content__description");
     return { divDescript, divContent };
   }
-
+  // Crée une div et son img + altText
+  // Creates a div and its img + altText
   function displayImg() {
     const divImg = document.createElement("div");
     divImg.classList.add("cart__item__img");
@@ -565,7 +235,8 @@ function cart(itemStored, k, kanapData) {
     img.alt = kanapData.altTxt;
     divImg.appendChild(img);
   }
-
+  // Crée un article dans le DOM et l'affiche
+  // Create an article in the DOM and displays it
   function displayArticle() {
     const cartItems = document.createElement("article");
     cartItems.dataset.id = itemStored[k].id;
@@ -577,7 +248,7 @@ function cart(itemStored, k, kanapData) {
   }
 }
 
-///////formulaire de commande ///////////////
+///////order form ///////////////
 
 const orderBtn = document.querySelector("#order");
 orderBtn.addEventListener("click", (e) => {
@@ -590,7 +261,7 @@ orderBtn.addEventListener("click", (e) => {
   if (formController()) return;
   if (emailController()) return;
 
-  const form = document.querySelector(".cart__order__form");
+  //const form = document.querySelector(".cart__order__form");
   const user = userData();
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",// sert à définir la méthode d'envoi de la requête
@@ -605,17 +276,18 @@ orderBtn.addEventListener("click", (e) => {
     .then((response) => response.json())
     .then((data) => {// récupère l'id de la commande 
       const orderId = data.orderId;
-      console.log(data);
+
       alert("Votre commande a bien été prise en compte, vous allez être redirigé vers la page de confirmation, KANAP vous remercie ");
       localStorage.clear();
 
       window.location.href = "confirmation.html" + "?orderId=" + orderId;//redirige vers la page de confirmation avec l'id de la commande
-      
+
     });
 
-  console.log(form.elements);
-});
 
+});
+// Récupère les données du formulaire et les saugarde dans un data
+// Gets the data from the form and saves it in a data
 function userData() {
 
   const form = document.querySelector(".cart__order__form");
@@ -637,11 +309,11 @@ function userData() {
     products: getKanapId(),
 
   }
-//console.log(data);
   return data;//retourne les données du formulaire
-
-
 }
+
+// Controle le formulaire
+// Controlls the form
 function formController() {
 
   const form = document.querySelector(".cart__order__form");
@@ -653,7 +325,7 @@ function formController() {
       input.nextElementSibling.textContent = "Ce champ est obligatoire";
       error = true;
     }
-    if(address.value.length < 5){
+    if (address.value.length < 5) {
       input.classList.add("error");
       address.nextElementSibling.textContent = "Ce champ est obligatoire et votre adresse doit contenir au moins 5 caractères";
       error = true;
@@ -668,7 +340,8 @@ function formController() {
   });
   return error;
 }
-
+// Controle le formulaire email
+// Controlls the form email
 function emailController() {
 
   const form = document.querySelector(".cart__order__form");
@@ -686,14 +359,15 @@ function emailController() {
   }
   return error;
 }
-
+// Récupère les id des "kanap" dans le localStorage et les retourne dans un tableau [KanapId]
+// Gets the id of the "kanap" in the localStorage and returns it in an array [KanapId]
 function getKanapId() {
   const itemStored = JSON.parse(localStorage.getItem("userOrder"));
   const kanapId = [];
   for (let i = 0; i < itemStored.length; i++) {
     kanapId.push(itemStored[i].id);//récupère l'id de chaque produit
   }
-  //console.log(kanapId);
+
   return kanapId;
 }
 
