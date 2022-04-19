@@ -54,6 +54,7 @@ function kanapColor(colors) {
         option.textContent = choices;
         choice.appendChild(option);
     })
+
 }
 // Affiche un message d'erreur dans le DOM si la requête n'a pas abouti
 // Displays an error message in the DOM if the request has not succeeded
@@ -75,12 +76,13 @@ fetch(`http://localhost:3000/api/products/${id}`)
     .catch(() => {
         displayError();
     })
+
 // Affichage des données du produit dans le DOM
 //  Displays the data of the product in the DOM 
 function kanaps(productPage) {
 
     const { imageUrl, altTxt, name, price, description, colors } = productPage;
-
+   
     kanapImg(imageUrl, altTxt)
     kanapName(name)
     kanapPrice(price)
@@ -115,16 +117,25 @@ button.addEventListener("click", () => {
     // Adds the product to the cart
     const addKanaps = () => {
 
-        // Vérifier si le produit est déjà dans le panier
+        let kanapData = {
+            id: id,
+            colors: colors,
+            quantity: Number(quantity),
+
+        };
+        divAlert()
+
+        // Vérifie si le produit est déjà dans le panier
         // Check if the product is already in the cart
         const findKanap = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
 
         if (findKanap) {
 
             findKanap.quantity = Number(findKanap.quantity);
-            findKanap.quantity = +quantity;//
+            findKanap.quantity = +quantity;
 
         } else {
+
             itemStored.push(kanapData);
 
         }
@@ -133,28 +144,59 @@ button.addEventListener("click", () => {
 
     }
 
-    let kanapData = {
-        id: id,
-        colors: colors,
-        quantity: Number(quantity),
-    };
-
     let itemStored = JSON.parse(localStorage.getItem("userOrder"));
 
     if (itemStored) {
 
         addKanaps();
+      
+
     }
 
     else {
 
         itemStored = [];
         addKanaps()
+        
     }
+    totalQuantity(itemStored)
 })
 
+/////////////////// Last addings //////////////////
+function totalQuantity(itemStored) {
 
+    let totalQuantity = 0;
+    for (let i = 0; i < itemStored.length; i++) {
+        totalQuantity += +itemStored[i].quantity;
+    }
+    
+   const total = document.querySelector(".alert");
+     total.textContent = "Votre ajout a bien été pris en compte !" ;
+     setTimeout(() => {
+            total.textContent = "Votre panier contient " + totalQuantity + " article(s)" + " 🛒" ;
+        }, 2500);
+}
 
+function divAlert() {
+
+    const divAlert = document.createElement("div");
+   
+    divAlert.style.marginTop = "20px";
+    divAlert.style.paddingTop = "10px";
+    divAlert.style.paddingBottom = "10px";
+    divAlert.style.borderRadius = "15px";
+    divAlert.style.backgroundColor = "rgba(0,0,0,0.5)";
+    divAlert.style.textAlign = "center";
+    divAlert.style.color = "white";
+    divAlert.style.fontSize = "20px";
+   
+    divAlert.classList.add("alert");
+    const alert = document.querySelector(".item__content__settings");
+    alert.appendChild(divAlert);
+    setTimeout(() => {
+        divAlert.remove();
+    }, 5500);
+}
 
 
 
