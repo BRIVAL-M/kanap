@@ -17,9 +17,7 @@ fetch("http://localhost:3000/api/products")
         for (let k = 0; k < itemStored.length; k++) {
 
             const myKanap = kanapData.find(_item => _item._id == itemStored[k].id)
-            console.log("console.log de myKanap :", myKanap)
-
-            console.log("console.log de itemStored :", itemStored)
+        
             if (myKanap) {
 
                 cart(itemStored, k, myKanap);
@@ -31,6 +29,7 @@ fetch("http://localhost:3000/api/products")
 
     }).catch(() => {
         displayError();
+        
 
     })
 // Affichage un message si la requête a échoué
@@ -87,7 +86,7 @@ function totalPrice(itemStored, kanapData) {
 // Delete a product from the cart
 function deleteProduct(itemStored, k) {
 
-    const deleteBtn = document.querySelectorAll(".deleteItem");
+    const deleteBtn = document.querySelectorAll(".deleteItem");////////////////////// a modifier
 
     deleteBtn[k].addEventListener("click", () => {
         itemStored.splice(k, 1);// on delete 1 produit de la liste à l'index k
@@ -231,8 +230,9 @@ function cart(itemStored, k, kanapData) {
 
 ///////Order form ///////////////
 
-const orderBtn = document.querySelector("#order");
-orderBtn.addEventListener("click", (e) => {
+
+addEventListener("click", (e) => { // remove const btnOrder
+if (e.target.id === "order") { 
     e.preventDefault();
     if (localStorage.length === 0) {
         alert("Votre panier est vide");
@@ -259,15 +259,13 @@ orderBtn.addEventListener("click", (e) => {
         .then((data) => {// récupère l'id de la commande 
             const orderId = data.orderId;
 
-            alert("Votre commande a bien été prise en compte, vous allez être redirigé vers la page de confirmation, KANAP vous remercie ");
+            alert("Votre commande a bien été prise en compte, vous allez être redirigé vers la page de confirmation, KANAP vous remercie !");
             localStorage.clear();
 
             window.location.href = "confirmation.html" + "?orderId=" + orderId;//redirige vers la page de confirmation avec l'id de la commande
 
-        });
+        }); }} );
 
-
-});
 // Récupère les données du formulaire et les saugarde dans un data
 // Gets the data from the form and saves it in a data
 function userData() {

@@ -82,7 +82,7 @@ fetch(`http://localhost:3000/api/products/${id}`)
 function kanaps(productPage) {
 
     const { imageUrl, altTxt, name, price, description, colors } = productPage;
-   
+
     kanapImg(imageUrl, altTxt)
     kanapName(name)
     kanapPrice(price)
@@ -94,72 +94,89 @@ function kanaps(productPage) {
 ///////////////////////BUTTON//////////////////////////
 
 
-// Selectionne le bouton "ajouter au panier"
-// Selects the "add to cart" button
-const button = document.getElementById('addToCart')
-
 // Ecoute l'événement click sur le bouton
 // Listens for the click event on the button
-button.addEventListener("click", () => {
+addEventListener('click', (event) => { // New correct syntax without const btn ;)
 
-    const colors = document.querySelector("#colors").value;
-    const quantity = document.querySelector("#quantity").value;
+    if (event.target.id === 'addToCart') {
+        const colors = document.querySelector("#colors").value;
+        const quantity = document.querySelector("#quantity").value;
 
-    if (colors == null || colors == "" || quantity == null || quantity == "" || quantity > 100 || quantity < 1) {
-        alert("Pourriez-vous nous indiquer une couleur et une quantité entre 1 et 100 pour poursuivre votre commande s'il vous plaît 🙏")
+        if (colors == null || colors == "" || quantity == null || quantity == "" || quantity > 100 || quantity < 1) {
+            alert("Pourriez-vous nous indiquer une couleur et une quantité entre 1 et 100 pour poursuivre votre commande s'il vous plaît 🙏")
 
-        return
-    }
+            return
+        }
 
-    //////////////////////////// localStorage /////////////////////////////////////
+         //////////////////////////// LocalStorage /////////////////////////////////////
 
-    // Ajoute le produit au panier
-    // Adds the product to the cart
-    const addKanaps = () => {
+        // Ajoute le produit au panier
+        // Adds the product to the cart
+        const addKanaps = () => {
 
-        let kanapData = {
-            id: id,
-            colors: colors,
-            quantity: Number(quantity),
+            let kanapData = {
+                id: id,
+                colors: colors,
+                quantity: Number(quantity),
 
-        };
-        divAlert()
+            };
+            if (document.querySelector(".alert")) {
+                    return
+                 }
+            
+            userAlert()
 
-        // Vérifie si le produit est déjà dans le panier
-        // Check if the product is already in the cart
-        const findKanap = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
+            //////////////////////////////////////////////////////////////////////////Fixed quantity bug /////////////////////////////////////////////////////////////////////////////////
 
-        if (findKanap) {
+            // Vérifie si le produit est déjà dans le panier
+            // Check if the product is already in the cart
+            const findKanap = itemStored.find(item => item.id === kanapData.id && item.colors === kanapData.colors);
 
-            findKanap.quantity = Number(findKanap.quantity);
-            findKanap.quantity = +quantity;
+            if (findKanap) {
 
-        } else {
+                findKanap.quantity = Number(findKanap.quantity);
+                findKanap.quantity = findKanap.quantity + Number(kanapData.quantity);
+            }
+            // Quantité max 100
+            // Maximum permitted quantity is 100
+            if (findKanap) {
 
-            itemStored.push(kanapData);
+                if (findKanap.quantity > 100) {
+                    findKanap.quantity = findKanap.quantity - kanapData.quantity;// La quatité n'est pas changée
+                    const total = document.querySelector(".alert");
+                    total.style.display = "none";
+                    alert("Vous ne pouvez pas acheter plus de 100 Kanaps de la même couleur !" + "Vous avez déjà acheté " + findKanap.quantity + " Kanaps de la même couleur.");
+                    location.reload(); // Pour refresh les inputs après l'alert
+
+                }
+            }
+
+            else {
+
+                itemStored.push(kanapData);
+
+            }
+
+            localStorage.setItem("userOrder", JSON.stringify(itemStored))
 
         }
 
-        localStorage.setItem("userOrder", JSON.stringify(itemStored))
+        let itemStored = JSON.parse(localStorage.getItem("userOrder"));
 
+        if (itemStored) {
+
+            addKanaps();
+
+}
+
+        else {
+
+            itemStored = [];
+            addKanaps()
+
+        }
+        totalQuantity(itemStored)
     }
-
-    let itemStored = JSON.parse(localStorage.getItem("userOrder"));
-
-    if (itemStored) {
-
-        addKanaps();
-      
-
-    }
-
-    else {
-
-        itemStored = [];
-        addKanaps()
-        
-    }
-    totalQuantity(itemStored)
 })
 
 /////////////////// Last addings //////////////////
@@ -169,34 +186,38 @@ function totalQuantity(itemStored) {
     for (let i = 0; i < itemStored.length; i++) {
         totalQuantity += +itemStored[i].quantity;
     }
-    
-   const total = document.querySelector(".alert");
-     total.textContent = "Votre ajout a bien été pris en compte !" ;
-     setTimeout(() => {
-            total.textContent = "Votre panier contient " + totalQuantity + " article(s)" + " 🛒" ;
-        }, 2500);
-}
 
-function divAlert() {
+    const total = document.querySelector(".alert");
 
-    const divAlert = document.createElement("div");
-   
-    divAlert.style.marginTop = "20px";
-    divAlert.style.paddingTop = "10px";
-    divAlert.style.paddingBottom = "10px";
-    divAlert.style.borderRadius = "15px";
-    divAlert.style.backgroundColor = "rgba(0,0,0,0.5)";
-    divAlert.style.textAlign = "center";
-    divAlert.style.color = "white";
-    divAlert.style.fontSize = "20px";
-   
-    divAlert.classList.add("alert");
-    const alert = document.querySelector(".item__content__settings");
-    alert.appendChild(divAlert);
+    total.textContent = "Votre ajout a bien été pris en compte !";
     setTimeout(() => {
-        divAlert.remove();
-    }, 5500);
+        total.textContent = "Votre panier contient " + totalQuantity + " article(s)" + " 🛒";
+    }, 2500);
 }
+
+function userAlert() {
+
+    const userInfo = document.createElement("p");
+
+    userInfo.style.marginTop = "20px";
+    userInfo.style.paddingTop = "10px";
+    userInfo.style.paddingBottom = "10px";
+    userInfo.style.borderRadius = "15px";
+    userInfo.style.backgroundColor = "rgba(0,0,0,0.5)";
+    userInfo.style.textAlign = "center";
+    userInfo.style.color = "white";
+    userInfo.style.fontSize = "20px";
+
+    userInfo.classList.add("alert");
+    const alert = document.querySelector(".item__content__settings");
+    alert.appendChild(userInfo);
+    setTimeout(() => {
+        userInfo.remove();
+    }, 5500);
+   
+ }
+
+
 
 
 
